@@ -1,0 +1,122 @@
+FUNCTION_BLOCK HavaKirlilik
+VAR_INPUT
+	
+	dGaz: REAL;
+	nufus: REAL;
+	mevsim: REAL;
+
+END_VAR
+VAR_OUTPUT
+
+	havaOran: REAL;
+END_VAR
+
+FUZZIFY nufus
+	TERM az:= (0,0)(169403,1)(559383,0);
+	TERM orta:= (169403,0)(559383,1)(1177436,1)(5782285,0) ;
+	TERM kalabalik:= (559383,0)(1177436,1)(5782285,1)(15907951,0);
+	TERM cokKalabalik:=(1177436,0)(5782285,1)(15907951,1)(15910000,0);
+	
+END_FUZZIFY
+
+FUZZIFY dGaz
+	TERM dusuk:= (0,0)(1,1)(47.241,0);
+	TERM ortalama:= (1.299,0)(47.241,1)(82.210,1)(683.557,0);
+	TERM yuksek:= (47.241,0)(82.210,1)(683.557,1)(1148.638,0);
+	TERM cokYuksek:=(82.210,0)(683.557,1)(1148.638,1)(1150.000,0);
+	
+END_FUZZIFY
+FUZZIFY mevsim
+	TERM ilkbahar:= trape 0 1 2 3;
+	TERM yaz:= trape 3 4 5 6;
+	TERM sonbahar:= trape 6 7 8 9;
+	TERM kis:= trape 9 10 11 12;
+	
+END_FUZZIFY
+
+DEFUZZIFY havaOran
+	TERM cokIyi:= (0,0)(25,1)(50,0);
+	TERM iyi := trape 25 50 75 100;
+	TERM yeterli:= trape 75 100 125 150;
+	TERM orta := trape 125 150 175 200;
+	TERM kotu := trape 175 200 250 300 ;
+	TERM cokKotu:= trape 250 300 400 500;
+	METHOD : RM;//COG
+
+END_DEFUZZIFY
+
+RULEBLOCK kuralBlok
+	
+		AND : MIN;
+		ACT: MIN;  
+		ACCU: MAX; 
+		RULE 1:IF nufus IS az AND dGaz IS dusuk and mevsim IS ilkbahar THEN havaOran IS cokIyi;
+		RULE 2:IF nufus IS az AND dGaz IS dusuk and mevsim IS yaz THEN havaOran IS cokIyi;
+		RULE 3:IF nufus IS az AND dGaz IS dusuk and mevsim IS sonbahar THEN havaOran IS cokIyi;
+		RULE 4:IF nufus IS az AND dGaz IS dusuk and mevsim IS kis THEN havaOran IS cokIyi;
+		RULE 5:IF nufus IS az AND dGaz IS ortalama and mevsim IS ilkbahar THEN havaOran IS cokIyi;
+		RULE 6:IF nufus IS az AND dGaz IS ortalama and mevsim IS yaz THEN havaOran IS cokIyi;
+		RULE 7:IF nufus IS az AND dGaz IS ortalama and mevsim IS sonbahar THEN havaOran IS iyi;
+		RULE 8:IF nufus IS az AND dGaz IS ortalama and mevsim IS kis THEN havaOran IS iyi;
+		RULE 9:IF nufus IS az AND dGaz IS yuksek and mevsim IS ilkbahar THEN havaOran IS iyi;
+		RULE 10:IF nufus IS az AND dGaz IS yuksek and mevsim IS yaz THEN havaOran IS iyi;
+		RULE 11:IF nufus IS az AND dGaz IS yuksek and mevsim IS sonbahar THEN havaOran IS yeterli;
+		RULE 12:IF nufus IS az AND dGaz IS yuksek and mevsim IS kis THEN havaOran IS yeterli;
+		RULE 13:IF nufus IS az AND dGaz IS cokYuksek and mevsim IS ilkbahar THEN havaOran IS yeterli;
+		RULE 14:IF nufus IS az AND dGaz IS cokYuksek and mevsim IS yaz THEN havaOran IS yeterli;
+		RULE 15:IF nufus IS az AND dGaz IS cokYuksek and mevsim IS sonbahar THEN havaOran IS orta;
+		RULE 16:IF nufus IS az AND dGaz IS cokYuksek and mevsim IS kis THEN havaOran IS orta;
+		RULE 17:IF nufus IS orta AND dGaz IS dusuk and mevsim IS ilkbahar THEN havaOran IS cokIyi;
+		RULE 18:IF nufus IS orta AND dGaz IS dusuk and mevsim IS yaz THEN havaOran IS cokIyi;
+		RULE 19:IF nufus IS orta AND dGaz IS dusuk and mevsim IS sonbahar THEN havaOran IS iyi;
+		RULE 20:IF nufus IS orta AND dGaz IS dusuk and mevsim IS kis THEN havaOran IS iyi;
+		RULE 21:IF nufus IS orta AND dGaz IS ortalama and mevsim IS ilkbahar THEN havaOran IS iyi;
+		RULE 22:IF nufus IS orta AND dGaz IS ortalama and mevsim IS yaz THEN havaOran IS iyi;
+		RULE 23:IF nufus IS orta AND dGaz IS ortalama and mevsim IS sonbahar THEN havaOran IS yeterli;
+		RULE 24:IF nufus IS orta AND dGaz IS ortalama and mevsim IS kis THEN havaOran IS yeterli;
+		RULE 25:IF nufus IS orta AND dGaz IS yuksek and mevsim IS ilkbahar THEN havaOran IS yeterli;
+		RULE 26:IF nufus IS orta AND dGaz IS yuksek and mevsim IS yaz THEN havaOran IS yeterli;
+		RULE 27:IF nufus IS orta AND dGaz IS yuksek and mevsim IS sonbahar THEN havaOran IS orta;
+		RULE 28:IF nufus IS orta AND dGaz IS yuksek and mevsim IS kis THEN havaOran IS orta;
+		RULE 29:IF nufus IS orta AND dGaz IS cokYuksek and mevsim IS ilkbahar THEN havaOran IS orta;
+		RULE 30:IF nufus IS orta AND dGaz IS cokYuksek and mevsim IS yaz THEN havaOran IS yeterli;
+		RULE 31:IF nufus IS orta AND dGaz IS cokYuksek and mevsim IS sonbahar THEN havaOran IS orta;
+		RULE 32:IF nufus IS orta AND dGaz IS cokYuksek and mevsim IS kis THEN havaOran IS kotu;
+		RULE 33:IF nufus IS kalabalik AND dGaz IS dusuk and mevsim IS ilkbahar THEN havaOran IS yeterli;
+		RULE 34:IF nufus IS kalabalik AND dGaz IS dusuk and mevsim IS yaz THEN havaOran IS iyi;
+		RULE 35:IF nufus IS kalabalik AND dGaz IS dusuk and mevsim IS sonbahar THEN havaOran IS yeterli;
+		RULE 36:IF nufus IS kalabalik AND dGaz IS dusuk and mevsim IS kis THEN havaOran IS yeterli;
+		RULE 37:IF nufus IS kalabalik AND dGaz IS ortalama and mevsim IS ilkbahar THEN havaOran IS orta;
+		RULE 38:IF nufus IS kalabalik AND dGaz IS ortalama and mevsim IS yaz THEN havaOran IS yeterli;
+		RULE 39:IF nufus IS kalabalik AND dGaz IS ortalama and mevsim IS sonbahar THEN havaOran IS orta;
+		RULE 40:IF nufus IS kalabalik AND dGaz IS ortalama and mevsim IS kis THEN havaOran IS kotu;
+		RULE 41:IF nufus IS kalabalik AND dGaz IS yuksek and mevsim IS ilkbahar THEN havaOran IS orta;
+		RULE 42:IF nufus IS kalabalik AND dGaz IS yuksek and mevsim IS yaz THEN havaOran IS yeterli;
+		RULE 43:IF nufus IS kalabalik AND dGaz IS yuksek and mevsim IS sonbahar THEN havaOran IS kotu;
+		RULE 44:IF nufus IS kalabalik AND dGaz IS yuksek and mevsim IS kis THEN havaOran IS kotu;
+		RULE 45:IF nufus IS kalabalik AND dGaz IS cokYuksek and mevsim IS ilkbahar THEN havaOran IS kotu;
+		RULE 46:IF nufus IS kalabalik AND dGaz IS cokYuksek and mevsim IS yaz THEN havaOran IS kotu;
+		RULE 47:IF nufus IS kalabalik AND dGaz IS cokYuksek and mevsim IS sonbahar THEN havaOran IS cokKotu;
+		RULE 48:IF nufus IS kalabalik AND dGaz IS cokYuksek and mevsim IS kis THEN havaOran IS cokKotu;
+		RULE 49:IF nufus IS cokKalabalik AND dGaz IS dusuk and mevsim IS ilkbahar THEN havaOran IS orta;
+		RULE 50:IF nufus IS cokKalabalik AND dGaz IS dusuk and mevsim IS yaz THEN havaOran IS orta;
+		RULE 51:IF nufus IS cokKalabalik AND dGaz IS dusuk and mevsim IS sonbahar THEN havaOran IS orta;
+		RULE 52:IF nufus IS cokKalabalik AND dGaz IS dusuk and mevsim IS kis THEN havaOran IS orta;
+		RULE 53:IF nufus IS cokKalabalik AND dGaz IS ortalama and mevsim IS ilkbahar THEN havaOran IS orta;
+		RULE 54:IF nufus IS cokKalabalik AND dGaz IS ortalama and mevsim IS yaz THEN havaOran IS orta;
+		RULE 55:IF nufus IS cokKalabalik AND dGaz IS ortalama and mevsim IS sonbahar THEN havaOran IS kotu;
+		RULE 56:IF nufus IS cokKalabalik AND dGaz IS ortalama and mevsim IS kis THEN havaOran IS kotu;
+		RULE 57:IF nufus IS cokKalabalik AND dGaz IS yuksek and mevsim IS ilkbahar THEN havaOran IS kotu;
+		RULE 58:IF nufus IS cokKalabalik AND dGaz IS yuksek and mevsim IS yaz THEN havaOran IS kotu;
+		RULE 59:IF nufus IS cokKalabalik AND dGaz IS yuksek and mevsim IS sonbahar THEN havaOran IS cokKotu;
+		RULE 60:IF nufus IS cokKalabalik AND dGaz IS yuksek and mevsim IS kis THEN havaOran IS cokKotu;
+		RULE 61:IF nufus IS cokKalabalik AND dGaz IS cokYuksek and mevsim IS ilkbahar THEN havaOran IS cokKotu;
+		RULE 62:IF nufus IS cokKalabalik AND dGaz IS cokYuksek and mevsim IS yaz THEN havaOran IS cokKotu;
+		RULE 63:IF nufus IS cokKalabalik AND dGaz IS cokYuksek and mevsim IS sonbahar THEN havaOran IS cokKotu;
+		RULE 64:IF nufus IS cokKalabalik AND dGaz IS cokYuksek and mevsim IS kis THEN havaOran IS cokKotu;
+		
+
+		
+	END_RULEBLOCK
+
+END_FUNCTION_BLOCK
